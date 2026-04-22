@@ -1,0 +1,13 @@
+{
+  "user_idea": "test",
+  "segments": [
+    {
+      "segment_id": 1,
+      "content": "第一段测试文案。"
+    },
+    {
+      "segment_id": 2,
+      "content": "第二段测试文案。"
+    }
+  ]
+}

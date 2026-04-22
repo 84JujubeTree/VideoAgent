@@ -1,0 +1,17 @@
+{
+  "sentence_data": {
+    "count": 2,
+    "chunks": [
+      {
+        "id": 1,
+        "timestamp": 1.0,
+        "content": "第一段测试文案。"
+      },
+      {
+        "id": 2,
+        "timestamp": 2.0,
+        "content": "第二段测试文案。"
+      }
+    ]
+  }
+}
