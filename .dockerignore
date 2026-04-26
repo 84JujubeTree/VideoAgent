@@ -1,0 +1,50 @@
+# Docker build context 黑名单。这个文件极其关键——你根目录有几 GB
+# 的 tools/ 和模型文件，没有它的话 docker build 会先把几 GB 拷给
+# daemon，慢得发指。
+
+# === Git / IDE / OS ===
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# === Python ===
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
+**/*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+env
+
+# === 本地秘密 / 运行时产物 ===
+.env
+.env.*
+tmp_videos/
+*.log
+
+# === 镜像里完全用不到的大目录 ===
+tools/
+dataset/
+assets/
+environment/
+main.py
+Communication.md
+demos_documents.md
+*.md
+LICENSE
+dummy_prompt.wav
+
+# === Docker 自身 ===
+Dockerfile
+.dockerignore
+docker-compose*.yml

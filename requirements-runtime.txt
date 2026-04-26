@@ -1,0 +1,8 @@
+# 仅运行 app.py + providers/* 所需的依赖，不含 tools/ 下任何本地模型
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+python-multipart>=0.0.9
+python-dotenv>=1.0
+dashscope>=1.20.0
+requests>=2.31
+httpx>=0.27

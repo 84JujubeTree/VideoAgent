@@ -1,11 +1,10 @@
 from pathlib import Path
 import os
+import requests
 from http import HTTPStatus
-from urllib.parse import urljoin
-
-import httpx
 from dotenv import load_dotenv
 from dashscope.audio.asr import Transcription
+import httpx
 
 load_dotenv()
 
@@ -14,30 +13,44 @@ class BailianASRProvider:
     def __init__(self):
         self.api_key = os.getenv("DASHSCOPE_API_KEY", "")
         self.model = os.getenv("BAILIAN_ASR_MODEL", "paraformer-v2")
-        self.public_audio_base_url = os.getenv("PUBLIC_AUDIO_BASE_URL", "").strip()
-
         if not self.api_key:
             raise ValueError("DASHSCOPE_API_KEY is not set in .env")
 
-    def _resolve_public_url(self, audio_path: Path) -> str:
-        """
-        把本地文件名映射到一个公网可访问 URL。
-        约定：你已经把同名文件上传到了 PUBLIC_AUDIO_BASE_URL 对应的位置。
-        例如：
-        PUBLIC_AUDIO_BASE_URL=https://my-bucket.oss-cn-beijing.aliyuncs.com/audio/
-        audio_path=Path('demo.wav')
-        -> https://my-bucket.oss-cn-beijing.aliyuncs.com/audio/demo.wav
-        """
-        if not self.public_audio_base_url:
-            raise ValueError(
-                "PUBLIC_AUDIO_BASE_URL is not set. "
-                "Bailian Paraformer requires a public HTTP/HTTPS file URL."
-            )
+    def _upload_to_dashscope(self, audio_path: Path) -> str:
+        """上传本地音频到 DashScope 临时存储，返回 oss:// URL"""
 
-        return urljoin(
-            self.public_audio_base_url.rstrip("/") + "/",
-            audio_path.name,
+        # 第一步：获取上传凭证
+        resp = requests.get(
+            "https://dashscope.aliyuncs.com/api/v1/uploads",
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            params={"action": "getPolicy", "model": self.model},
+            timeout=30,
         )
+        if resp.status_code != 200:
+            raise RuntimeError(f"获取上传凭证失败: {resp.text}")
+        policy_data = resp.json()["data"]
+
+        # 第二步：表单上传到 OSS 临时地址
+        key = f"{policy_data['upload_dir']}/{audio_path.name}"
+        with open(audio_path, "rb") as f:
+            upload_resp = requests.post(
+                policy_data["upload_host"],
+                files={
+                    "OSSAccessKeyId": (None, policy_data["oss_access_key_id"]),
+                    "Signature":       (None, policy_data["signature"]),   # 注意大写S
+                    "policy":          (None, policy_data["policy"]),
+                    "x-oss-object-acl":       (None, policy_data["x_oss_object_acl"]),
+                    "x-oss-forbid-overwrite": (None, policy_data["x_oss_forbid_overwrite"]),
+                    "key":             (None, key),
+                    "success_action_status": (None, "200"),
+                    "file":            (audio_path.name, f, "audio/wav"),
+                },
+                timeout=120,
+            )
+        if upload_resp.status_code != 200:
+            raise RuntimeError(f"上传文件到临时存储失败: {upload_resp.text}")
+
+        return f"oss://{key}"
 
     def _parse_result_json(self, payload: dict) -> dict:
         transcripts = payload.get("transcripts", [])
@@ -46,41 +59,34 @@ class BailianASRProvider:
 
         merged_text_parts = []
         segments = []
-
         for transcript in transcripts:
             text = transcript.get("text", "") or ""
             if text:
                 merged_text_parts.append(text)
-
             for sentence in transcript.get("sentences", []):
-                segments.append(
-                    {
-                        "start": sentence.get("begin_time", 0) / 1000.0,
-                        "end": sentence.get("end_time", 0) / 1000.0,
-                        "text": sentence.get("text", "") or "",
-                    }
-                )
-
+                segments.append({
+                    "start": sentence.get("begin_time", 0) / 1000.0,
+                    "end":   sentence.get("end_time",   0) / 1000.0,
+                    "text":  sentence.get("text", "") or "",
+                })
         return {
             "text": "\n".join([t for t in merged_text_parts if t]).strip(),
             "segments": segments,
         }
 
-    def transcribe(
-        self,
-        audio_path: Path,
-        lang: str,
-        prompt: str | None = None,
-    ) -> dict:
-        file_url = self._resolve_public_url(audio_path)
+    def transcribe(self, audio_path: Path, lang: str, prompt: str | None = None) -> dict:
+        # 1. 上传文件拿 oss:// URL
+        file_url = self._upload_to_dashscope(audio_path)
+        print(f"[ASR] 文件已上传: {file_url}")
 
+        # 2. 提交转写任务，必须加 X-DashScope-OssResourceResolve: enable
         kwargs = {
             "model": self.model,
             "file_urls": [file_url],
             "api_key": self.api_key,
+            # Python SDK 支持透传额外 header
+            "headers": {"X-DashScope-OssResourceResolve": "enable"},
         }
-
-        # 官方文档说明 language_hints 只支持 paraformer-v2
         if self.model == "paraformer-v2" and lang in {"zh", "en", "ja", "ko", "de", "fr", "ru"}:
             kwargs["language_hints"] = [lang]
 
@@ -102,18 +108,21 @@ class BailianASRProvider:
 
         first_result = results[0]
         if first_result.get("subtask_status") != "SUCCEEDED":
+            code = first_result.get("code")
+            message = first_result.get("message")
+            if code == "SUCCESS_WITH_NO_VALID_FRAGMENT":
+                raise RuntimeError(
+                    "ASR 未检测到有效语音片段（SUCCESS_WITH_NO_VALID_FRAGMENT）。"
+                    "常见原因：1) 视频音轨是静音；2) 音频是纯背景音乐没有人声；"
+                    "3) 语种与 language_hints 不匹配。请检查输入视频。"
+                )
             raise RuntimeError(
-                f"ASR subtask failed: code={first_result.get('code')}, "
-                f"message={first_result.get('message')}"
+                f"ASR subtask failed: code={code}, message={message}"
             )
 
         transcription_url = first_result.get("transcription_url")
-        if not transcription_url:
-            raise RuntimeError(f"No transcription_url found. result={first_result}")
-
         with httpx.Client(timeout=120.0) as client:
             resp = client.get(transcription_url)
             resp.raise_for_status()
-            payload = resp.json()
 
-        return self._parse_result_json(payload)
+        return self._parse_result_json(resp.json())

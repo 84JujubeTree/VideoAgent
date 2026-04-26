@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AscendFlow VideoMaker</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="app">
+        <!-- ============= 顶栏 ============= -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="logo-mark"></div>
+                <div class="brand">
+                    <span class="brand-name">AscendFlow</span>
+                    <span class="brand-product">VideoMaker</span>
+                </div>
+            </div>
+
+            <div class="topbar-center">
+                <div class="project-tag">
+                    <span class="project-dot"></span>
+                    <span id="projectName">未命名项目</span>
+                    <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <button class="topbar-icon" id="settingsBtn" title="访问令牌设置">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button class="topbar-export" id="exportBtn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>导出</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ============= 左侧导航 ============= -->
+        <nav class="rail">
+            <button class="rail-item active" data-tab="media">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"></path></svg>
+                <span>媒体</span>
+            </button>
+            <button class="rail-item" data-tab="template">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+                <span>模板</span>
+            </button>
+            <button class="rail-item" data-tab="element">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span>元素</span>
+            </button>
+            <button class="rail-item" data-tab="audio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                <span>音频</span>
+            </button>
+            <button class="rail-item" data-tab="text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+                <span>文字</span>
+            </button>
+            <button class="rail-item" data-tab="caption">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 15h4M13 15h4M7 11h2M11 11h6"></path></svg>
+                <span>字幕</span>
+            </button>
+            <button class="rail-item" data-tab="transcript">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>
+                <span>转录</span>
+            </button>
+            <button class="rail-item" data-tab="effect">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>特效</span>
+            </button>
+            <button class="rail-item" data-tab="transition">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                <span>转场</span>
+            </button>
+            <button class="rail-item" data-tab="filter">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                <span>滤镜</span>
+            </button>
+        </nav>
+
+        <!-- ============= 中部素材面板 ============= -->
+        <aside class="panel">
+            <!-- 媒体 tab：实际功能 -->
+            <div class="panel-tab" data-tab="media">
+                <button class="upload-btn" id="uploadBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>上传</span>
+                </button>
+
+                <input type="file" id="file" accept="video/*" hidden />
+
+                <div class="quick-tiles">
+                    <button class="quick-tile" disabled title="即将推出">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    </button>
+                    <button class="quick-tile" disabled title="即将推出">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect></svg>
+                    </button>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">改写风格</div>
+                    <div class="style-grid">
+                        <button type="button" class="style-card selected" data-style="standup">
+                            <span class="style-emoji">🎤</span>
+                            <span class="style-name">脱口秀</span>
+                            <span class="style-desc">轻松幽默 · 单口</span>
+                        </button>
+                        <button type="button" class="style-card" data-style="crosstalk">
+                            <span class="style-emoji">🎭</span>
+                            <span class="style-name">相声</span>
+                            <span class="style-desc">捧逗有趣 · 对口</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <span>开始生成</span>
+                </button>
+
+                <div class="section section-assets">
+                    <div class="section-title">我的素材</div>
+                    <div class="asset-list" id="assetList">
+                        <div class="asset-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"></path></svg>
+                            <div class="asset-empty-text">目前还没有任何内容</div>
+                            <div class="asset-empty-hint">将文件拖到这里或点击上方上传</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 占位 tab：所有未实现的功能 -->
+            <div class="panel-tab" data-tab="placeholder" hidden>
+                <div class="placeholder-state">
+                    <div class="placeholder-glow"></div>
+                    <div class="placeholder-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    </div>
+                    <div class="placeholder-title" id="placeholderTitle">敬请期待</div>
+                    <div class="placeholder-desc">这个功能正在路上，下个版本会上线</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============= 中央画布 ============= -->
+        <main class="canvas-region">
+            <div class="canvas-toolbar">
+                <div class="canvas-aspect">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="1"></rect></svg>
+                    <span>16:9</span>
+                </div>
+                <div class="canvas-zoom">
+                    <span>100%</span>
+                    <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </div>
+
+            <div class="canvas-stage">
+                <div class="canvas-frame" id="canvasFrame">
+                    <!-- 空状态 -->
+                    <div class="canvas-empty" id="canvasEmpty">
+                        <button class="canvas-plus" id="canvasUpload">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                        <div class="canvas-empty-title">点击以上传</div>
+                        <div class="canvas-empty-hint">或将文件拖放到这里</div>
+                        <div class="canvas-empty-formats">MP4 · MOV · AVI · MKV</div>
+                    </div>
+
+                    <!-- 视频预览（源/结果共用同一个标签，src 切换） -->
+                    <video class="canvas-video" id="previewVideo" hidden controls></video>
+
+                    <!-- 处理中遮罩 -->
+                    <div class="canvas-processing" id="canvasProcessing" hidden>
+                        <div class="proc-spinner"></div>
+                        <div class="proc-label" id="procLabel">准备中…</div>
+                        <div class="proc-percent" id="procPercent">0%</div>
+                    </div>
+
+                    <!-- 错误遮罩 -->
+                    <div class="canvas-error" id="canvasError" hidden>
+                        <div class="err-icon">⚠</div>
+                        <div class="err-title">生成失败</div>
+                        <div class="err-msg" id="errorMessage"></div>
+                        <button type="button" class="btn-text" id="retryBtn">重新尝试</button>
+                    </div>
+
+                    <!-- 拖放遮罩 -->
+                    <div class="canvas-dropmask" id="canvasDropmask" hidden>
+                        <div class="dropmask-text">松开以上传</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文本结果抽屉（成功后展示原文+改写脚本，可折叠） -->
+            <details class="canvas-drawer" id="resultDrawer" hidden>
+                <summary>查看识别原文与改写脚本</summary>
+                <div class="drawer-grid">
+                    <div class="drawer-card">
+                        <div class="drawer-card-title">识别出的原文</div>
+                        <pre id="transcriptPre" class="text-block"></pre>
+                    </div>
+                    <div class="drawer-card">
+                        <div class="drawer-card-title">AI 改写后的脚本</div>
+                        <pre id="scriptPre" class="text-block"></pre>
+                    </div>
+                </div>
+            </details>
+        </main>
+
+        <!-- ============= 底部时间轴 ============= -->
+        <section class="timeline">
+            <div class="tl-bar">
+                <button class="tl-btn" id="tlPlay" title="播放预览">
+                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+                <span class="tl-time" id="tlTime">00:00 / 00:00</span>
+                <span class="tl-spacer"></span>
+                <span class="tl-task" id="taskIdLabel"></span>
+            </div>
+            <div class="tl-tracks">
+                <div class="tl-ruler">
+                    <span>00:00</span><span>00:02</span><span>00:04</span>
+                    <span>00:06</span><span>00:08</span><span>00:10</span>
+                </div>
+                <ol class="pipeline" id="pipeline">
+                    <li class="pl-step" data-step="upload">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">接收</div>
+                    </li>
+                    <li class="pl-step" data-step="prepare">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">预处理</div>
+                    </li>
+                    <li class="pl-step" data-step="recognize">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">识别原声</div>
+                    </li>
+                    <li class="pl-step" data-step="rewrite">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">AI 改写</div>
+                    </li>
+                    <li class="pl-step" data-step="voice">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">合成配音</div>
+                    </li>
+                    <li class="pl-step" data-step="merge">
+                        <div class="pl-bar"><span class="pl-fill"></span></div>
+                        <div class="pl-name">合成视频</div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 设置弹层（API key） -->
+        <div class="popover" id="settingsPopover" hidden>
+            <div class="popover-row">
+                <label class="label-mini" for="apiKey">访问令牌</label>
+                <input
+                    type="password"
+                    id="apiKey"
+                    class="input-text"
+                    placeholder="服务端未启用鉴权时可留空"
+                    autocomplete="off"
+                />
+            </div>
+            <div class="popover-hint">填入后会自动记到本地，下次自动填入。</div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
