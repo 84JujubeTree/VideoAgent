@@ -1,477 +1,228 @@
 <div align="center">
 
-<img src='./assets/logo_new.png' width=40%/>
+# AscendFlow VideoMaker
 
-<!-- # Open Agentic Video Intelligence -->
-<br>
+**Cloud-API fork of [HKUDS/VideoAgent](https://github.com/HKUDS/VideoAgent), with a CapCut-style web UI.**
 
-**🌟 Comprehensive Video Intelligence: <br> An All-in-One Framework for Understanding, Editing, and Generation**
-
-<div align="center">
-
-</div>
-
-<a href='https://space.bilibili.com/3546868449544308'><img src="https://img.shields.io/badge/bilibili-00A1D6.svg?logo=bilibili&logoColor=white" /></a>&nbsp;
-<a href='https://www.youtube.com/@AI-Creator-is-here'><img src='https://badges.aleen42.com/src/youtube.svg' /></a>&nbsp;
-<br>
-<a href="./Communication.md"><img src="https://img.shields.io/badge/💬Feishu-Group-07c160?style=for-the-badge&logoColor=white&labelColor=1a1a2e"></a>
-<a href="./Communication.md"><img src="https://img.shields.io/badge/WeChat-Group-07c160?style=for-the-badge&logo=wechat&logoColor=white&labelColor=1a1a2e"></a>
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue)](./LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](#)
+[![Status](https://img.shields.io/badge/status-MVP-orange)](#)
 
 </div>
 
-<div align="center">
-	
-[English](readme.md) | [简体中文](readme_zh.md)
-
-</div>
+> **Heads up**: This is a heavy fork of [HKUDS/VideoAgent](https://github.com/HKUDS/VideoAgent).
+> Where the upstream runs everything **locally on GPU** (Whisper, CosyVoice, ImageBind, fish-speech, seed-vc, DiffSinger), this fork **swaps every model for a cloud API** (Aliyun DashScope / 百炼 + MiniMax) and ships a CapCut-style web UI, so the whole thing runs on a CPU-only box with ~1 GB of RAM and zero model downloads.
 
 ---
 
-## 📹 **Demo Video**
-<div>
-<a href="https://www.youtube.com/watch?v=JZkXO1NG2Ok" target='_blank'><img src="assets/overview.png" width="100%"></a>
-</div>
+## TL;DR
 
-In this video, we demonstrate how to use VideoAgent to:
-- Clearly articulate user requirements
-- Achieve ​intent analysis and ​autonomous tool use & planning
-- Create ​multi-modal products, including detailed workflows
-- Fully automatic generation of video overview
-
-## 🚀 Key Features
-
-🧠 - **Understanding Video Content**<br>
-Enable in-depth analysis, summarization, and insight extraction from video media with advanced multi-modal intelligence capabilities.
-
-✂️ - **Editing Video Clips**<br>
-Provide intuitive tools for assembling, clipping, and reconfiguring content with seamless workflow integration.
-
-🎨 - **Remaking Creative Videos**<br>
-Utilize generative technologies to produce new, imaginative video content through AI-powered creative assistance.
-
-🔧 - **Multi-Modal Agentic Framework**<br>
-Deliver comprehensive video intelligence through an integrated framework that combines multiple AI modalities for enhanced performance.
-
-🚀 - **Seamless Natural Language Experience**<br>
-Transform video interaction and creation through pure conversational AI - no complex interfaces or technical expertise required, just natural dialogue with VideoAgent.
-
- 
-```mermaid
-graph TB
-    A[🎬 VideoAgent Framework] --> B[🧠 Video Understanding & Summarization]
-    A --> C[✂️ Video Editing]
-    A --> D[🎨 VIdeo Remaking]
-    
-    B --> B1[Video Q&A]
-    B --> B2[Video Summarization]
-    
-    C --> C1[Movie Edits]
-    C --> C2[Commentary Video]
-    C --> C3[Video Overview]
-    
-    D --> D1[Meme Videos]
-    D --> D2[Music Videos]
-    D --> D3[Cross-Cultural Comedy]
+```bash
+git clone https://github.com/84JujubeTree/VideoAgent.git
+cd VideoAgent
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-runtime.txt
+pip install pydub librosa numpy            # only needed for the singing pipeline
+sudo apt install ffmpeg
+cp .env.example .env && $EDITOR .env       # fill in DASHSCOPE_API_KEY (+ MINIMAX_API_KEY for singing)
+uvicorn app:app --host 0.0.0.0 --port 8008
 ```
 
-</div>
-
-
-<div align="center">
-<table>
-<tr>
-<th align="center"> </th>
-<th align="center">VideoAgent</th>
-<th align="center">Director</th>
-<th align="center">Funclip</th>
-<th align="center">NarratoAI</th>
-<th align="center">NotebookLM</th>
-</tr>
-<tr>
-<td align="center">Beat-synced Edits</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-<tr>
-<td align="center">Storytelling Video</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-<tr>
-<td align="center">Video Overview</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-</tr>
-<tr>
-<td align="center">Meme Video Remaking</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-<tr>
-<td align="center">Song Remixes</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-<tr>
-<td align="center">Cross-lingual Adaptations</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-<tr>
-<td align="center">Video Q&A</td>
-<td align="center">✅</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">✅</td>
-</tr>
-<tr>
-<td align="center">Sound Effects Tools</td>
-<td align="center">✅</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
-</tr>
-</table>
-</div>
-
-
-
-
+Open http://localhost:8008.
 
 ---
 
-## 📑 Table of Contents
+## What this fork changes vs. upstream
 
-- [🌟 System Overview](#system-overview)
-- [🔧 Evaluation](#evaluation)
-- [🚀 Quick Start](#quick-start)
-- [🔮 Demos](#demos)
-- [💖 Acknowledgments](#acknowledgments)
+| Aspect | Upstream HKUDS/VideoAgent | This fork |
+|---|---|---|
+| **ASR** | Whisper large-v3-turbo (local, ~5 GB) | Bailian `paraformer-v2` (API) |
+| **TTS** | CosyVoice (local) | Bailian `cosyvoice-v2` (API) |
+| **LLM** | Claude / GPT-4o / DeepSeek / Gemini (4 separate keys) | Bailian `qwen-plus` (one key) |
+| **Embedding** | ImageBind (local, ~5 GB) | Bailian text embedding (API) |
+| **Singing voice** | DiffSinger + seed-vc (note-level, local) | MiniMax `music-2.6` (API, prompt-based) |
+| **Entrypoint** | CLI: `python main.py` then type prompt | FastAPI: `uvicorn app:app`, web UI on `:8008` |
+| **GPU required** | Yes, 8 GB+ VRAM | No |
+| **Model downloads** | ~30 GB across 6 checkpoints | None |
+| **Config** | `environment/config/config.yml` (4 LLM blocks + tool paths) | `.env` |
+| **Auth / rate limit** | None | `X-API-Key` header + per-IP sliding window |
 
-
-### 🔥 **Why VideoAgent?**
-
-| 🧠 **Easy-to-Use** | 🚀 **Boundless Creativity** | 🎨 **High-Quality** |
-|:---:|:---:|:---:|
-| One-Prompt Video Creation | Create From Any Ideas | Human-Quality Video Production |
-| Transform your ideas into professional videos | Workflow generation for your unique ideas | Deliver videos that meet professional standards |
-
----
-
-## 🌟System Overview
-
-Our system introduces three key innovations for automated video processing. **Intent Analysis** captures both explicit and implicit sub-intents beyond user commands. **Autonamous Tool Use & Planning** employs graph-powered workflow generation with adaptive feedback loops for automated agent orchestration. **Multi-Modal Understanding** transforms raw input into semantically aligned visual queries for enhanced retrieval.
-
-### 🧠 **Intent Analysis**
-	
-- 🔍 VideoAgent intelligently **decomposes user instructions** into both **explicit and implicit sub-intents**, capturing nuanced requirements that users may not explicitly state. This advanced parsing ensures **comprehensive understanding** of user goals beyond surface-level commands.
-
-- 🎯 Through an **intent-to-agent mapping mechanism**, the system identifies precisely which capabilities within the multi-agent framework are needed. This targeted approach enables **efficient activation** of relevant system components while avoiding unnecessary computational overhead for **optimal task execution**.
-
-### 🔧 **Autonomous Tool Use & Planning**
-
-- ⚙️ **A graph-powered framework** automatically translates user intents into **executable workflows**. The system dynamically selects appropriate agents and constructs optimal execution sequences. Nodes represent tool capabilities while edges define workflow connections for complex video tasks.
-
-- 🔄 Adaptive feedback loops continuously refine the planning process through **two-step self-evaluation**. This ensures robust **automated decision-making** and seamless execution. The system **self-corrects** and optimizes performance throughout the entire task lifecycle.
-
-### 🎬 **Multi-Modal Understanding**
-
-- 📋 **The Storyboard Agent** transforms raw user input into **optimized visual queries**. It first analyzes pre-captioned video material banks to understand available resources. This foundational analysis ensures the system knows exactly what content is accessible for query processing.
-
-- 💡 The agent then **decomposes user input** into **fine-grained sub-queries** that are both visually and semantically aligned. This sophisticated breakdown enables **enhanced video retrieval** by matching user intentions with the most relevant visual content in the database.
-
-<div align="center">
-    <img src='./assets/framework.jpg' /><br>
-</div>
+The original CLI agent (`main.py` + `environment/agents/multi.py`) and the local model `tools/` directory are **kept in the tree but not used by `app.py`**. If you need the upstream's MAD SVC / VideoRAG / ImageBind features, run them from upstream directly.
 
 ---
 
-## 🔧Evaluation
-We conduct extensive experiments across multiple dimensions to validate the effectiveness of VideoAgent in addressing key challenges.
+## Architecture
 
-### Boundless Creativity via Workflow Construction
-
-To evaluate VideoAgent's **boundless creativity** through automatic workflow construction, we compared five broadly applicable agents across three backbone models. Our findings demonstrate that VideoAgent significantly outperforms other baselines on the Audio and Video datasets, showcasing its **creative workflow generation capabilities** through graph-structured guidance and self-reflection driven by dedicated self-evaluation feedback. Furthermore, we observe that VideoAgent exhibits superior and more stable **creative performance** under the Claude 3.7 backbone compared to GPT-4o and Deepseek-v3, while other baseline methods show fluctuations across different backbones. This highlights VideoAgent's ability to **unleash boundless creativity** by automatically constructing diverse and effective workflows that adapt to various user requirements, with more capable LLMs achieving deeper comprehension and providing more robust creative solutions for complex graph-based tasks.
-
-<div align="center">
-    <img src='./assets/eval1_audio_new.png' /><br>
-    <img src='./assets/eval1_video_new.png' /><br>
-</div>
-
-### Superior Multimodal Understanding
-
-To validate our multimodal understanding capabilities, we conducted text-to-video retrieval experiments using shuffled caption queries. The evaluation employs three metrics to assess our model's ability to retrieve corresponding visual content: Recall measures the model's ability to correctly reorder shuffled video clips by comparing retrieved clip midpoints against ground truth positions; Embedding Matching-based score assesses coarse-grained alignment between generated videos and high-level caption summaries; and Intersection over Union quantifies temporal alignment accuracy at the clip level by computing the ratio of temporal overlap to total coverage between retrieved and ground truth intervals. The experimental results demonstrate that our approach can retrieve more accurate video segments, thereby showcasing our precise multimodal understanding capabilities.
-
-
-<div align="center">
-    <img src='./assets/eva2.png' /><br>
-</div>
-
-
-### More Iterations, Better Performance
-
-We investigate VideoAgent's iterative refinement capabilities by analyzing the impact of reflection rounds on performance. Through comprehensive hyperparameter experiments on workflow composition across two datasets using three LLM backbones, we demonstrate VideoAgent's **notable self-improvement ability**. The results reveal that while early iterations produce baseline results, our system's **adaptive reflection mechanism** drives significant performance gains with each subsequent round. VideoAgent achieves **consistent workflow composition success rates of 0.95** across all tested configurations, showcasing its **robust self-correction capabilities** and **reliable high-quality output** regardless of the underlying LLM backbone.
-<div align="center">
-    <div style="display: flex; justify-content: center; width: 80%; flex-wrap: nowrap;">
-        <img src='./assets/eva3.jpg' style="margin: 0 5px; width: 400px;" />
-	<img src='./assets/eva4.jpg' style="margin: 0 5px; width: 400px;" />
-    </div>
-</div>
+```
+                    ┌──── /static/{index.html, app.js, styles.css}
+                    │     CapCut-style web UI, vanilla JS, no build step
+HTTP :8008 ──┐      │
+             ├─► app.py  (FastAPI)
+             │     │      ├── GET  /                  → serves index.html
+             │     │      ├── POST /generate/from_video
+             │     │      ├── GET  /task/{id}         → poll progress
+             │     │      ├── GET  /tasks
+             │     │      ├── GET  /download
+             │     │      └── GET  /health
+             │     │
+             │     └─── BackgroundTasks → _run_pipeline:
+             │            ① probe        ffprobe (audio stream + duration)
+             │            ② extract      ffmpeg → 16 kHz mono wav
+             │            ③ asr          BailianASRProvider (paraformer-v2)
+             │            ④ llm | lyrics qwen-plus, prompt switches on `style`
+             │            ⑤ tts | singing
+             │                ├── BailianTTSProvider     (cosyvoice-v2)
+             │                │     ↳ style ∈ {standup, crosstalk, highlight}
+             │                └── MinimaxSingingProvider (music-2.6)
+             │                      ↳ style == "singing"
+             │            ⑥ mux          ffmpeg, copy video + new audio
+             │
+             └─► /files (StaticFiles, exposes tmp_videos/{task_id}/...)
+```
 
 ---
 
-## 🚀Quick Start
+## Providers (swappable)
 
-### 🖥️ **Environment**
+All cloud calls go through small `Protocol`-style classes in `providers/`. To plug in a different vendor (Tencent, Volcengine, Whisper API, OpenAI TTS, …) implement the matching interface and flip the env var.
 
-```
-GPU Memory: 8GB  
-OS: Linux, Windows
-```
+| Capability | Default class | Mock for offline tests | Env switch |
+|---|---|---|---|
+| ASR | `BailianASRProvider` | `MockASRProvider` | `ASR_PROVIDER=bailian` |
+| TTS | `BailianTTSProvider` | `MockTTSProvider` | `TTS_PROVIDER=bailian` |
+| Embedding | `BailianEmbeddingProvider` | `MockEmbeddingProvider` | `EMBEDDING_PROVIDER=bailian` |
+| Singing | `MinimaxSingingProvider` | `MockSingingProvider` | `SINGING_PROVIDER=minimax` |
 
-### 📥 **Clone and Install**
-
-```bash
-git clone https://github.com/HKUDS/VideoAgent.git
-conda create --name videoagent python=3.10
-conda activate videoagent
-conda install -y -c conda-forge pynini==2.1.5 ffmpeg
-pip install -r requirements.txt
-```
-
-### 📦 **Model Download**
-
-```bash
-# Download CosyVoice
-cd tools/CosyVoice
-huggingface-cli download PillowTa1k/CosyVoice --local-dir pretrained_models
-```
-
-```bash
-# Download fish-speech
-cd tools/fish-speech
-huggingface-cli download fishaudio/fish-speech-1.5 --local-dir checkpoints/fish-speech-1.5
-```
-
-```bash
-# Download seed-vc
-cd tools/seed-vc
-huggingface-cli download PillowTa1k/seed-vc --local-dir checkpoints
-```
-
-```bash
-# Download DiffSinger
-cd tools/DiffSinger
-huggingface-cli download PillowTa1k/DiffSinger --local-dir checkpoints
-```
-
-```bash
-# Download Whisper
-cd tools
-huggingface-cli download openai/whisper-large-v3-turbo --local-dir whisper-large-v3-turbo
-```
-
-```bash
-# Make sure git-lfs is installed (https://git-lfs.com)
-git lfs install
-```
-
-```bash
-# Download ImageBind
-cd tools
-mkdir .checkpoints
-cd .checkpoints
-wget https://dl.fbaipublicfiles.com/imagebind/imagebind_huge.pth
-```
-
-**🌟 Multiple models are available for your convenience; you may wish to download only those relevant to your project.**
-
-
-<table>
-  <tr>
-    <th align="center">Feature Type</th>
-    <th align="center">Video Demo</th>
-    <th align="center">Required Models</th>
-  </tr>
-  <tr>
-    <td align="center">Cross Talk</td>
-    <td align="center">English Stand-up Comedy to Chinese Crosstalk</td>
-    <td align="center">CosyVoice, Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">Talk Show</td>
-    <td align="center">Chinese Crosstalk to English Stand-up Comedy</td>
-    <td align="center">CosyVoice, Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">MAD TTS</td>
-    <td align="center">Xiao-Ming-Jian-Mo(小明剑魔) Meme</td>
-    <td align="center">fish-speech</td>
-  </tr>
-  <tr>
-    <td align="center">MAD SVC</td>
-    <td align="center">AI Music Videos</td>
-    <td align="center">DiffSinger, seed-vc, Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">Rhythm</td>
-    <td align="center">Spider-Man: Across the Spider-Verse</td>
-    <td align="center">Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">Comm</td>
-    <td align="center">Commentary Video</td>  
-    <td align="center">CosyVoice, Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">News</td>
-    <td align="center">Tech News: OpenAI's GPT-4o Image Generation Release</td>
-    <td align="center">CosyVoice, Whisper, ImageBind</td>
-  </tr>
-  <tr>
-    <td align="center">Video QA/Summarization</td>
-    <td align="center">Dune 2 Movie Cast Update Podcast</td>
-    <td align="center">Whisper</td>
-  </tr>
-</table>
-
-</div>
-
-### 🤖 **LLM Configuration**
-
-```bash
-# VideoAgent\environment\config\config.yml
-# Applicable scenarios and LLM configuration
-# Claude is required as it powers the Agentic Graph Router 
-llm:
-  # Video Remixing/TTS/SVC/Stand-up/CrossTalk
-  deepseek_api_key: ""  
-  deepseek_base_url: ""  
-
-  # Agentic Graph Router/TTS/SVC/Stand-up/CrossTalk
-  claude_api_key: ""  
-  claude_base_url: ""
-
-  # Video Editing/Overview/Summarization/QA/Commentary Video
-  gpt_api_key: ""  
-  gpt_base_url: ""  
-
-  # MLLM for caption and fine-grained video understanding
-  gemini_api_key: ""  
-  gemini_base_url: ""  
-```
-
-### 🎯 **Usage**
-
-```bash
-# With the configuration now complete, proceed to run the following instructions:
-python main.py
-# The console will output:
-User Requirement: ...
-# Requirement Example:
-# 1. I need to create a reworded version of an existing video where the speech content is modified while maintaining the original speaker's voice. The video should have the same visuals as the original, but with updated dialogue that follows my specific requirements.
-# 2. I have a standup comedy script that I'd like to turn into a professional-looking video. I need the script to be performed with good comedic timing and audience reactions, then matched with relevant video footage to create a complete standup comedy special. I already have a reference script and some footage I want to use for the video.
-```
-The current LLM selections are optimized for each function.
-
-You can also adjust the model names in `VideoAgent\environment\config\llm.py` if needed.
+Provider tests live next to them: `test_asr_mock.py`, `test_voice_generator.py`, `test_minimax_singing.py`, etc.
 
 ---
 
-## 🔮Demos
+## Web UI features
 
-<table>
-<tr>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV1C9Z6Y3ESo/" target='_blank'><img src="assets/spiderman_cover.png" width="100%"></a>
-Movie Edits
-</td>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV1ucZ6YmEBU/" target='_blank'><img src="assets/masterma_cover.png" width="100%"></a>
-Meme Videos
-</td>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV1t8ZCYsEeA/" target='_blank'><img src="assets/airencuoguo_cover.png" width="100%"></a>
-Music Videos
-</td>
-</tr>
-<tr>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV1ucZ6YmESg/" target='_blank'><img src="assets/adapted_crosstalk_cover.png" width="100%"></a>
-Verbal Comedy Arts
-</td>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV1TmZ6YjEvV/" target='_blank'><img src="assets/joylife_cover.png" width="100%"></a>
-Commentary Video
-</td>
-<td align="center" width="33%">
-<a href="https://www.bilibili.com/video/BV12mZ6YLEqW/" target='_blank'><img src="assets/openai_news_cover.png" width="100%"></a>
-Video Overview
-</td>
-</tr>
-</table>
+* **3 rewrite styles**: 🎤 脱口秀 (standup) · 🎭 相声 (crosstalk) · 🎵 歌声合成 (MiniMax music-2.6)
+* **6-stage live progress bar** with shimmer animation: 接收 → 预处理 → 识别原声 → AI 改写 → 合成配音/歌唱 → 合成视频
+* **Canvas aspect dropdown**: 16:9 / 9:16 / 1:1 / 4:3
+* **Zoom dropdown**: 50 / 75 / 100 / 125 / 150 % / fit
+* **Quick-tile** portrait/landscape toggle, two-way synced with the aspect dropdown
+* **Transcript tab**: latest task's ASR text gets piped into a dedicated side panel
+* **Drag-and-drop** video upload, project name auto-derived from filename
+* **Result drawer**: side-by-side original transcript + rewritten script
+* **API-key popover** (`X-API-Key`) with `localStorage` persistence
+* Optional **back-link** to a companion FireRed-OpenStoryline instance on `:8005`
 
-For additional demo usage details, please refer to:  
-👉 [Demos Documentation](demos_documents.md)
-
-
-You can find more fun videos on our Bilibili channel here:  
-👉 [Bilibili Homepage](https://space.bilibili.com/3546868449544308)  
-Feel free to check it out for more entertaining content! 😊
-
-
-**Note**: All videos are used for research and demonstration purposes only. The audio and visual assets are sourced from the Internet. Please contact us if you believe any content infringes upon your intellectual property rights.
+The frontend is intentionally three flat files (no React, no bundler) so iterating on layout means saving a file and refreshing the tab.
 
 ---
 
-## 💖**Acknowledgments**
+## Singing pipeline notes
 
-We express our deepest gratitude to the numerous individuals and organizations that have made VideoAgent possible. This framework stands on the shoulders of giants, benefiting from the collective wisdom of the open-source community and the groundbreaking work of researchers worldwide.
-
-### 🔧 **Open-Source Community and Service Providers**
-
-- [CosyVoice](https://github.com/FunAudioLLM/CosyVoice)
-- [Fish Speech](https://github.com/fishaudio/fish-speech)
-- [Seed-VC](https://github.com/Plachtaa/seed-vc)
-- [DiffSinger](https://github.com/MoonInTheRiver/DiffSinger)
-- [VideoRAG](https://github.com/HKUDS/VideoRAG)
-- [ImageBind](https://github.com/facebookresearch/ImageBind)
-- [Whisper](https://github.com/openai/whisper)
-- [Librosa](https://github.com/librosa/librosa)
-
-
-### 🎨 **Content Creators and Inspiration**
-
-Our work has been significantly enriched by the creative contributions of content creators across various platforms. We acknowledge:
-
-- 🎬 **Content Creators**: The talented creators behind the original video content used for testing and demonstration
-- 🎭 **Comedy Artists**: Those whose work inspired our cross-cultural adaptations  
-- 🎥 **Filmmakers**: The production teams behind the movies and TV shows featured in our demos
-
-**⚠️ Note**: All content used in our demonstrations is for research purposes only. We deeply respect the intellectual property rights of all content creators and welcome any concerns or feedback regarding content usage.
+* MiniMax music API has **no note-level (MIDI) input** unlike DiffSinger. The provider sends the rewritten lyrics with `[Verse]` / `[Chorus]` tags and a style prompt, gets a complete song back, then `librosa.effects.time_stretch`-es it to match the original video duration.
+* For a workflow closer to the upstream MAD SVC ("preserve the original song's melody, swap lyrics + voice"), switch to **`music-cover`** / **`music-cover-free`** and set `MINIMAX_REF_AUDIO_URL` to a publicly reachable reference song URL.
+* Lyrics quality is bounded by `qwen-plus`. Tweak the singing prompt in `app.py::generate_script()` if the rhyme/phrasing isn't to taste.
+* Default `MINIMAX_PROMPT="流行, 男声, 慢节奏, 怀旧, 干净人声"` — change in `.env` to taste; `provider.__init__` reads env, so a service restart is required.
 
 ---
 
-<div align="center">
-<img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.Open-NotebookLM&style=for-the-badge&color=00d4ff" alt="Visitors">
-</div>
+## API reference
+
+### `POST /generate/from_video`
+
+Multipart form. Auth: optional `X-API-Key` header (set `API_KEYS=k1,k2` in `.env` to enable).
+
+| field | type | description |
+|---|---|---|
+| `file` | file | mp4 / mov / avi / mkv with a clean voice track |
+| `style` | string | `standup` · `crosstalk` · `highlight` · `singing` |
+
+Returns `202` with `{ task_id, status, poll_url }`.
+
+### `GET /task/{task_id}`
+
+```jsonc
+{
+  "task_id": "...",
+  "status": "running" | "succeeded" | "failed",
+  "stage": "asr" | "llm" | "lyrics" | "tts" | "singing" | "mux" | "done",
+  "progress": 0,                  // 0–100
+  "result": {                     // populated when status=succeeded
+    "style": "singing",
+    "transcript": "...",          // ASR text
+    "segments": [...],            // ASR segments with timestamps
+    "script": "[Verse]\n...",     // rewritten lyrics or script
+    "output_video_url": "/files/.../foo_output.mp4",
+    "audio_url": "/files/.../sung.wav",
+    "audio_provider": "music-2.6",
+    "metadata_url": "/files/.../metadata.json"
+  },
+  "error": null
+}
+```
+
+### `GET /health`
+
+```json
+{ "status": "ok" }
+```
+
+---
+
+## Environment variables (`.env`)
+
+```env
+# Aliyun DashScope (bailian) — required
+DASHSCOPE_API_KEY=
+BAILIAN_ASR_MODEL=paraformer-v2
+BAILIAN_LLM_MODEL=qwen-plus
+BAILIAN_TTS_MODEL=cosyvoice-v2
+BAILIAN_TTS_VOICE=longxiaochun_v2
+
+# MiniMax — required for the 'singing' style
+MINIMAX_API_KEY=
+MINIMAX_BASE_URL=https://api.minimaxi.com
+MINIMAX_MUSIC_MODEL=music-2.6
+MINIMAX_PROMPT=流行, 男声, 慢节奏, 怀旧, 干净人声
+MINIMAX_OUTPUT_FORMAT=url
+MINIMAX_REF_AUDIO_URL=                # only for music-cover models
+
+# Provider switches
+ASR_PROVIDER=bailian
+TTS_PROVIDER=bailian
+EMBEDDING_PROVIDER=bailian
+SINGING_PROVIDER=minimax              # set to 'disabled' to drop the singing card
+
+# Server
+HOST=0.0.0.0
+PORT=8008
+
+# Auth & rate limit
+API_KEYS=                             # comma-separated; empty = auth disabled (dev only)
+RATE_LIMIT_MAX=20
+RATE_LIMIT_WINDOW_SEC=3600
+```
+
+---
+
+## What's intentionally missing from this fork
+
+* MAD SVC pipeline (note-level singing voice synthesis with reference song melody)
+* ImageBind cross-modal retrieval
+* VideoRAG retrieval
+* The 168-KB multi-agent graph router (kept on disk, not wired into `app.py`)
+* Local model checkpoints under `tools/`
+
+If you need any of those, see [HKUDS/VideoAgent](https://github.com/HKUDS/VideoAgent) directly. PRs that re-introduce them as a switchable provider are welcome.
+
+---
+
+## Acknowledgments
+
+* Upstream: **[HKUDS/VideoAgent](https://github.com/HKUDS/VideoAgent)** — agentic video framework, Apache 2.0
+* Cloud APIs: **[Aliyun DashScope / 百炼](https://dashscope.console.aliyun.com/)** (paraformer-v2 / cosyvoice-v2 / qwen-plus), **[MiniMax 海螺](https://platform.minimaxi.com/)** (music-2.6)
+* Libraries: `fastapi`, `uvicorn`, `pydantic`, `librosa`, `pydub`, `dashscope`, `requests`, `python-dotenv`
+* `ffmpeg` for the heavy lifting
+
+---
+
+## License
+
+Apache 2.0, inherited from upstream.
