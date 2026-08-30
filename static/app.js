@@ -374,7 +374,9 @@
         }
 
         transcriptPre.textContent = result.transcript || "（无内容）";
-        scriptPre.textContent = result.script || "（无内容）";
+        scriptPre.textContent = result.duration_warning
+            ? `⚠️ ${result.duration_warning}\n\n${result.script || "（无内容）"}`
+            : (result.script || "（无内容）");
         resultDrawer.hidden = false;
     }
 

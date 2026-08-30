@@ -4,7 +4,7 @@
 
 **Cloud-API fork of [HKUDS/VideoAgent](https://github.com/HKUDS/VideoAgent), with a CapCut-style web UI.**
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue)](./LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](#)
 [![Status](https://img.shields.io/badge/status-MVP-orange)](#)
 

@@ -274,6 +274,25 @@ def probe_audio_stream(video_path: Path) -> dict:
     }
 
 
+def probe_media_duration(path: Path) -> Optional[float]:
+    """返回任意音/视频文件的时长（秒），探测失败返回 None（调用方应把 None 当"未知"处理，不当 0）。"""
+    ffprobe = _resolve_ffprobe()
+    result = subprocess.run(
+        [ffprobe, "-v", "error",
+         "-show_entries", "format=duration",
+         "-of", "json",
+         str(path)],
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    try:
+        info = json.loads(result.stdout.decode("utf-8") or "{}")
+        return float(info["format"]["duration"])
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return None
+
+
 def measure_mean_loudness_db(audio_path: Path) -> float:
     """用 ffmpeg volumedetect 测平均音量；解析失败返回 -91（视为静音）"""
     ffmpeg = _resolve_ffmpeg()
@@ -390,6 +409,21 @@ def _run_pipeline(task_id: str, video_path: Path, workdir: Path, style: str, fil
             output_path=tts_output_path,
         )
 
+        # 2) 体检：mux 用 -shortest，TTS 音频如果比原视频短很多，
+        #    输出视频会被静默截断到 TTS 长度——在这里检测并记录警告，
+        #    而不是让用户拿到一个"变短了"的视频却毫无线索。
+        duration_warning = None
+        src_duration = probe.get("duration_sec")
+        tts_duration = probe_media_duration(tts_output_path)
+        if src_duration and tts_duration and tts_duration < 0.85 * src_duration:
+            duration_warning = (
+                f"合成语音时长 {tts_duration:.1f}s 明显短于原视频 {src_duration:.1f}s，"
+                f"输出视频会被 ffmpeg -shortest 截断到约 {tts_duration:.1f}s。"
+                "如果这不是预期效果（例如风格不是刻意做精简剪辑），"
+                "请检查生成的脚本是否比原文本短太多。"
+            )
+            print(f"[pipeline] WARNING: {duration_warning}")
+
         _update_task(task_id, stage="mux", progress=90)
         ffmpeg = _resolve_ffmpeg()
         output_video = workdir / f"{Path(filename).stem}_output.mp4"
@@ -423,6 +457,7 @@ def _run_pipeline(task_id: str, video_path: Path, workdir: Path, style: str, fil
             "script": rewritten_script,
             "tts_audio": tts_result.get("audio_path", str(tts_output_path)),
             "output_video": str(output_video),
+            "duration_warning": duration_warning,
         }
         metadata_path = workdir / "metadata.json"
         metadata_path.write_text(
@@ -444,6 +479,7 @@ def _run_pipeline(task_id: str, video_path: Path, workdir: Path, style: str, fil
                 "output_video_url": output_video_url,
                 "tts_audio_url": tts_audio_url,
                 "metadata_url": metadata_url,
+                "duration_warning": duration_warning,
             },
         )
 
